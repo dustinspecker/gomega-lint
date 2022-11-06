@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/dustinspecker/gomega-lint/internal/rules"
-	"golang.org/x/tools/go/analysis/singlechecker"
+	"golang.org/x/tools/go/analysis/multichecker"
 )
 
 func main() {
-	singlechecker.Main(rules.RequireAnnotationAnalyzer)
+	multichecker.Main(rules.RequireAnnotationAnalyzer, rules.NoAnnotationFormat)
 }
