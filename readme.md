@@ -14,6 +14,7 @@
 
 ## Rules
 
+- [noformatannotation](docs/rules/noformatannotation.md)
 - [requireannotation](docs/rules/requireannotation.md)
 
 ## License
