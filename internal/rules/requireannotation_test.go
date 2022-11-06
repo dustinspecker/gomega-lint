@@ -10,5 +10,5 @@ import (
 func TestRequireAnnotation(t *testing.T) {
 	testDataDir := analysistest.TestData()
 
-	analysistest.Run(t, testDataDir, rules.RequireAnnotationAnalyzer, "./...")
+	analysistest.Run(t, testDataDir, rules.RequireAnnotationAnalyzer, "./src/requireannoation/")
 }
