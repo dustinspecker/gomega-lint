@@ -12,3 +12,9 @@ func TestNoAnnotationFormat(t *testing.T) {
 
 	analysistest.Run(t, testDataDir, rules.NoAnnotationFormat, "./src/noannotationformat/")
 }
+
+func TestNoAnnotationFormatAutoFix(t *testing.T) {
+	testDataDir := analysistest.TestData()
+
+	analysistest.RunWithSuggestedFixes(t, testDataDir, rules.NoAnnotationFormat, "./src/noannotationformat/")
+}

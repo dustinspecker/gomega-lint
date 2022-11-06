@@ -37,6 +37,22 @@ func noAnnotationFormatRun(pass *analysis.Pass) (interface{}, error) {
 			return &analysis.Diagnostic{
 				Message: "Annotation should not use fmt.Sprintf",
 				Pos:     gomegaAssertion.Node.Pos(),
+				SuggestedFixes: []analysis.SuggestedFix{
+					{
+						TextEdits: []analysis.TextEdit{
+							{
+								Pos:     gomegaAssertion.AssertionArgs[1].Pos(),
+								End:     callExpr.Lparen + 1,
+								NewText: []byte(""),
+							},
+							{
+								Pos:     callExpr.Rparen,
+								End:     callExpr.Rparen + 1,
+								NewText: []byte(""),
+							},
+						},
+					},
+				},
 			}
 		}
 
