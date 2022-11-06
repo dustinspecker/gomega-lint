@@ -18,6 +18,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		if len(gomegaAssertion.AssertionArgs) == 1 {
 			return &analysis.Diagnostic{
 				Message: fmt.Sprintf("%s should have an annotation", gomegaAssertion.AssertionMethodName),
+				Pos:     gomegaAssertion.Node.Pos(),
 			}
 		}
 
