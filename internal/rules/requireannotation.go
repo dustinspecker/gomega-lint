@@ -8,8 +8,8 @@ import (
 )
 
 var RequireAnnotationAnalyzer = &analysis.Analyzer{
-	Name: "requiredescription",
-	Doc:  "Require all assertions to have a description",
+	Name: "requireannotation",
+	Doc:  "Require all assertions to have an annotation",
 	Run:  run,
 }
 
