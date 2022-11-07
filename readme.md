@@ -18,6 +18,12 @@ Some rules support automatically fixing violations.
 
 1. `gomega-lint -fix ./...`
 
+### Run individual rules
+
+By default, `gomega-lint` runs all rules. To specify which rules to run, use the following:
+
+1. `gomega-lint -noformatannotation -requireannotation ./...`
+
 ## Rules
 
 - [noformatannotation](docs/rules/noformatannotation.md) (fixable)
