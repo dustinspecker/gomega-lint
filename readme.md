@@ -4,7 +4,7 @@
 
 ## Install
 
-1. `go install github.com/dustinspecker/gomega-lint/cmd/gomega-lint`
+1. `go install github.com/dustinspecker/gomega-lint/cmd/gomega-lint@latest`
 
 ## Usage
 
