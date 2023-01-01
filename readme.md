@@ -27,13 +27,14 @@ gomega-lint -fix ./...
 By default, `gomega-lint` runs all rules. To specify which rules to run, use the following:
 
 ```shell
-gomega-lint -noformatannotation -requireannotation ./...
+gomega-lint -noformatannotation -requireannotation -usenewwitht ./...
 ```
 
 ## Rules
 
 - [noformatannotation](docs/rules/noformatannotation.md) (fixable)
 - [requireannotation](docs/rules/requireannotation.md)
+- [usenewwitht](docs/rules/usenewwitht.md) (fixable)
 
 ## License
 MIT
