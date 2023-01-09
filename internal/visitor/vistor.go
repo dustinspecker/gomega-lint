@@ -13,6 +13,7 @@ type GomegaAssertion struct {
 	AssertionArgs       []ast.Expr
 	AssertionMethodName string
 	Node                ast.Node
+	Subject             ast.Expr
 }
 
 var assertionMethods = []string{
@@ -71,6 +72,7 @@ func VistGomegaAssertions(pass *analysis.Pass, visitFunc func(gomegaAssertion Go
 					AssertionArgs:       callExpr.Args,
 					AssertionMethodName: selExpr.Sel.Name,
 					Node:                node,
+					Subject:             subjectCallExpr.Args[0],
 				}
 
 				diagnostic := visitFunc(gomegaAssertion)

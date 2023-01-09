@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	multichecker.Main(rules.RequireAnnotationAnalyzer, rules.NoAnnotationFormat, rules.UseNewWithT)
+	multichecker.Main(rules.RequireAnnotationAnalyzer, rules.NoAnnotationFormat, rules.UseNewWithT, rules.UsePointTo)
 }

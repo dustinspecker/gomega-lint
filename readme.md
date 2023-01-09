@@ -35,6 +35,7 @@ gomega-lint -noformatannotation -requireannotation -usenewwitht ./...
 - [noformatannotation](docs/rules/noformatannotation.md) (fixable)
 - [requireannotation](docs/rules/requireannotation.md)
 - [usenewwitht](docs/rules/usenewwitht.md) (fixable)
+- [usepointto](docs/rules/usepointto.md)
 
 ## License
 MIT
