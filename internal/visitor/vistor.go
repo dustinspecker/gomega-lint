@@ -5,7 +5,6 @@ import (
 	"go/types"
 	"strings"
 
-	"golang.org/x/exp/slices"
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -14,14 +13,6 @@ type GomegaAssertion struct {
 	AssertionMethodName string
 	Node                ast.Node
 	Subject             ast.Expr
-}
-
-var assertionMethods = []string{
-	"NotTo",
-	"Should",
-	"ShouldNot",
-	"To",
-	"ToNot",
 }
 
 func VistGomegaAssertions(pass *analysis.Pass, visitFunc func(gomegaAssertion GomegaAssertion) *analysis.Diagnostic) {
@@ -71,23 +62,20 @@ func VistGomegaAssertions(pass *analysis.Pass, visitFunc func(gomegaAssertion Go
 				return true
 			}
 
-			// Verify the the method being called is an assertion method
-			if slices.Contains(assertionMethods, selExpr.Sel.Name) {
-				// we want the last argument in cases of `ExpectWithOffset`, etc. where the last
-				// arg is the subject under test
-				lastArg := subjectCallExpr.Args[len(subjectCallExpr.Args)-1]
+			// we want the last argument in cases of `ExpectWithOffset`, etc. where the last
+			// arg is the subject under test
+			lastArg := subjectCallExpr.Args[len(subjectCallExpr.Args)-1]
 
-				gomegaAssertion := GomegaAssertion{
-					AssertionArgs:       callExpr.Args,
-					AssertionMethodName: selExpr.Sel.Name,
-					Node:                node,
-					Subject:             lastArg,
-				}
+			gomegaAssertion := GomegaAssertion{
+				AssertionArgs:       callExpr.Args,
+				AssertionMethodName: selExpr.Sel.Name,
+				Node:                node,
+				Subject:             lastArg,
+			}
 
-				diagnostic := visitFunc(gomegaAssertion)
-				if diagnostic != nil {
-					pass.Report(*diagnostic)
-				}
+			diagnostic := visitFunc(gomegaAssertion)
+			if diagnostic != nil {
+				pass.Report(*diagnostic)
 			}
 
 			return true
