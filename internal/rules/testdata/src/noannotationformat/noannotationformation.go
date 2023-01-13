@@ -2,12 +2,20 @@ package requireannotation
 
 import (
 	"fmt"
+	"testing"
 
 	"github.com/onsi/gomega"
 	. "github.com/onsi/gomega"
 )
 
 func main() {
+	t := &testing.T{}
+	g := gomega.NewWithT(t)
+
+	g.Expect("hello").To(Equal("hello"), fmt.Sprintf("hello %s", "dustin")) // want `Annotation should not use fmt.Sprintf`
+
+	ExpectWithOffset(1, "hello").To(Equal("hello"), fmt.Sprintf("hello %s", "dustin")) // want `Annotation should not use fmt.Sprintf`
+
 	Expect("hello").To(Equal("hello"), fmt.Sprintf("hello %s", "dustin"))                      // want `Annotation should not use fmt.Sprintf`
 	gomega.Expect("hello").NotTo(gomega.Equal("hello"), fmt.Sprintf("hello %s", "dustin"))     // want `Annotation should not use fmt.Sprintf`
 	gomega.Expect("hello").Should(gomega.Equal("hello"), fmt.Sprintf("hello %s", "dustin"))    // want `Annotation should not use fmt.Sprintf`
@@ -29,6 +37,10 @@ func main() {
 	Consistently("hello").Should(Equal("hello"), fmt.Sprintf("hello %s", "dustin"))                  // want `Annotation should not use fmt.Sprintf`
 	gomega.Consistently("hello").Should(gomega.Equal("hello"), fmt.Sprintf("hello %s", "dustin"))    // want `Annotation should not use fmt.Sprintf`
 	gomega.Consistently("hello").ShouldNot(gomega.Equal("hello"), fmt.Sprintf("hello %s", "dustin")) // want `Annotation should not use fmt.Sprintf`
+
+	g.Expect("hello").To(Equal("hello"), "hello %s", "dustin")
+
+	ExpectWithOffset(1, "hello").To(Equal("hello"), "hello %s", "dustin")
 
 	Expect("hello").To(Equal("hello"), "hello %s", "dustin")
 	gomega.Expect("hello").NotTo(gomega.Equal("hello"), "hello %s", "dustin")

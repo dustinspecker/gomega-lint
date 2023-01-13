@@ -1,6 +1,8 @@
 package requireannotation
 
 import (
+	"testing"
+
 	"github.com/onsi/gomega"
 	. "github.com/onsi/gomega"
 
@@ -8,6 +10,13 @@ import (
 )
 
 func main() {
+	t := &testing.T{}
+	g := gomega.NewWithT(t)
+
+	g.Expect("hello").To(Equal("hello")) // want `To should have an annotation`
+
+	ExpectWithOffset(1, "hello").To(Equal("hello")) // want `To should have an annotation`
+
 	Expect("hello").To(Equal("hello"))                      // want `To should have an annotation`
 	gomega.Expect("hello").NotTo(gomega.Equal("hello"))     // want `NotTo should have an annotation`
 	gomega.Expect("hello").Should(gomega.Equal("hello"))    // want `Should should have an annotation`
@@ -30,12 +39,16 @@ func main() {
 	gomega.Consistently("hello").Should(gomega.Equal("hello"))    // want `Should should have an annotation`
 	gomega.Consistently("hello").ShouldNot(gomega.Equal("hello")) // want `ShouldNot should have an annotation`
 
+	ExpectWithOffset(1, "hello").To(Equal("hello"), "hello")
+
 	Expect("hello").To(Equal("hello"), "hello")
 	gomega.Expect("hello").NotTo(gomega.Equal("hello"), "hello")
 	gomega.Expect("hello").Should(gomega.Equal("hello"), "hello")
 	gomega.Expect("hello").ShouldNot(gomega.Equal("hello"), "hello")
 	gomega.Expect("hello").To(gomega.Equal("hello"), "hello")
 	gomega.Expect("hello").ToNot(gomega.Equal("hello"), "hello")
+
+	g.Expect("hello").To(Equal("hello"), "hello")
 
 	Ω("hello").To(Equal("hello"), "hello")
 	gomega.Ω("hello").NotTo(gomega.Equal("hello"), "hello")

@@ -25,18 +25,14 @@ var assertionMethods = []string{
 }
 
 func VistGomegaAssertions(pass *analysis.Pass, visitFunc func(gomegaAssertion GomegaAssertion) *analysis.Diagnostic) {
-	var consistentlyFuncType types.Type
-	var eventuallyFuncType types.Type
-	var expectFuncType types.Type
-	var omegaFuncType types.Type
+	var assertionType types.Type
+	var asyncAssertionType types.Type
 
 	for _, pkg := range pass.Pkg.Imports() {
 		// use HasSuffix because unit tests will use package vendor/github.com/onsi/gomega
 		if strings.HasSuffix(pkg.Path(), "github.com/onsi/gomega") {
-			consistentlyFuncType = pkg.Scope().Lookup("Consistently").Type()
-			eventuallyFuncType = pkg.Scope().Lookup("Eventually").Type()
-			expectFuncType = pkg.Scope().Lookup("Expect").Type()
-			omegaFuncType = pkg.Scope().Lookup("Ω").Type()
+			assertionType = pkg.Scope().Lookup("Assertion").Type()
+			asyncAssertionType = pkg.Scope().Lookup("AsyncAssertion").Type()
 		}
 	}
 
@@ -62,17 +58,30 @@ func VistGomegaAssertions(pass *analysis.Pass, visitFunc func(gomegaAssertion Go
 
 			// Verify the subject is one of Expect, etc.
 			subjectCallExprFunType := pass.TypesInfo.TypeOf(subjectCallExpr.Fun)
-			if subjectCallExprFunType != consistentlyFuncType && subjectCallExprFunType != eventuallyFuncType && subjectCallExprFunType != expectFuncType && subjectCallExprFunType != omegaFuncType {
+			signature, ok := subjectCallExprFunType.(*types.Signature)
+			if !ok {
+				return true
+			}
+			if signature.Results().Len() == 0 {
+				return true
+			}
+
+			returnVal := signature.Results().At(0).Type()
+			if returnVal != assertionType && returnVal != asyncAssertionType {
 				return true
 			}
 
 			// Verify the the method being called is an assertion method
 			if slices.Contains(assertionMethods, selExpr.Sel.Name) {
+				// we want the last argument in cases of `ExpectWithOffset`, etc. where the last
+				// arg is the subject under test
+				lastArg := subjectCallExpr.Args[len(subjectCallExpr.Args)-1]
+
 				gomegaAssertion := GomegaAssertion{
 					AssertionArgs:       callExpr.Args,
 					AssertionMethodName: selExpr.Sel.Name,
 					Node:                node,
-					Subject:             subjectCallExpr.Args[0],
+					Subject:             lastArg,
 				}
 
 				diagnostic := visitFunc(gomegaAssertion)
