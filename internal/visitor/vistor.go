@@ -18,12 +18,18 @@ type GomegaAssertion struct {
 func VistGomegaAssertions(pass *analysis.Pass, visitFunc func(gomegaAssertion GomegaAssertion) *analysis.Diagnostic) {
 	var assertionType types.Type
 	var asyncAssertionType types.Type
+	var gomegaMatcher types.Type
 
 	for _, pkg := range pass.Pkg.Imports() {
 		// use HasSuffix because unit tests will use package vendor/github.com/onsi/gomega
 		if strings.HasSuffix(pkg.Path(), "github.com/onsi/gomega") {
 			assertionType = pkg.Scope().Lookup("Assertion").Type()
 			asyncAssertionType = pkg.Scope().Lookup("AsyncAssertion").Type()
+			for _, pkgImport := range pkg.Imports() {
+				if strings.HasSuffix(pkgImport.Path(), "github.com/onsi/gomega/types") {
+					gomegaMatcher = pkgImport.Scope().Lookup("GomegaMatcher").Type()
+				}
+			}
 		}
 	}
 
@@ -57,8 +63,22 @@ func VistGomegaAssertions(pass *analysis.Pass, visitFunc func(gomegaAssertion Go
 				return true
 			}
 
+			// validate the return type is an Assertion
 			returnVal := signature.Results().At(0).Type()
 			if returnVal != assertionType && returnVal != asyncAssertionType {
+				return true
+			}
+
+			// validate the first parameter is a GomegaMatcher
+			assertionFunType := pass.TypesInfo.TypeOf(callExpr.Fun)
+			assertionFunSignature, ok := assertionFunType.(*types.Signature)
+			if !ok {
+				return true
+			}
+			if assertionFunSignature.Params().Len() == 0 {
+				return true
+			}
+			if assertionFunSignature.Params().At(0).Type() != gomegaMatcher {
 				return true
 			}
 

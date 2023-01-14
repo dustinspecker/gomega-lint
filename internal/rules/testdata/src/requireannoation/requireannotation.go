@@ -2,6 +2,7 @@ package requireannotation
 
 import (
 	"testing"
+	"time"
 
 	"github.com/onsi/gomega"
 	. "github.com/onsi/gomega"
@@ -31,9 +32,10 @@ func main() {
 	gomega.Ω("hello").ToNot(gomega.Equal("hello"))     // want `ToNot should have an annotation`
 	gomega.Ω("hello").ShouldNot(gomega.Equal("hello")) // want `ShouldNot should have an annotation`
 
-	Eventually("hello").Should(Equal("hello"))                  // want `Should should have an annotation`
-	gomega.Eventually("hello").Should(gomega.Equal("hello"))    // want `Should should have an annotation`
-	gomega.Eventually("hello").ShouldNot(gomega.Equal("hello")) // want `ShouldNot should have an annotation`
+	Eventually("hello").Should(Equal("hello"))                          // want `Should should have an annotation`
+	Eventually("hello").WithPolling(time.Minute).Should(Equal("hello")) // want `Should should have an annotation`
+	gomega.Eventually("hello").Should(gomega.Equal("hello"))            // want `Should should have an annotation`
+	gomega.Eventually("hello").ShouldNot(gomega.Equal("hello"))         // want `ShouldNot should have an annotation`
 
 	Consistently("hello").Should(Equal("hello"))                  // want `Should should have an annotation`
 	gomega.Consistently("hello").Should(gomega.Equal("hello"))    // want `Should should have an annotation`
@@ -66,4 +68,6 @@ func main() {
 	gomega.Consistently("hello").ShouldNot(gomega.Equal("hello"), "hello")
 
 	customasserter.Expect().To("hey")
+
+	Expect("hello").Error()
 }
