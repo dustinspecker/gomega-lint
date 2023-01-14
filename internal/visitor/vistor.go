@@ -8,6 +8,14 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+const (
+	assertionIdentifierName      = "Assertion"
+	asyncAssertionIdentifierName = "AsyncAssertion"
+	gomegaMatcherIdentifierName  = "GomegaMatcher"
+	gomegaPackageName            = "github.com/onsi/gomega"
+	gomegaTypesPackageName       = "github.com/onsi/gomega/types"
+)
+
 type GomegaAssertion struct {
 	AssertionArgs       []ast.Expr
 	AssertionMethodName string
@@ -22,12 +30,12 @@ func VistGomegaAssertions(pass *analysis.Pass, visitFunc func(gomegaAssertion Go
 
 	for _, pkg := range pass.Pkg.Imports() {
 		// use HasSuffix because unit tests will use package vendor/github.com/onsi/gomega
-		if strings.HasSuffix(pkg.Path(), "github.com/onsi/gomega") {
-			assertionType = pkg.Scope().Lookup("Assertion").Type()
-			asyncAssertionType = pkg.Scope().Lookup("AsyncAssertion").Type()
+		if strings.HasSuffix(pkg.Path(), gomegaPackageName) {
+			assertionType = pkg.Scope().Lookup(assertionIdentifierName).Type()
+			asyncAssertionType = pkg.Scope().Lookup(asyncAssertionIdentifierName).Type()
 			for _, pkgImport := range pkg.Imports() {
-				if strings.HasSuffix(pkgImport.Path(), "github.com/onsi/gomega/types") {
-					gomegaMatcher = pkgImport.Scope().Lookup("GomegaMatcher").Type()
+				if strings.HasSuffix(pkgImport.Path(), gomegaTypesPackageName) {
+					gomegaMatcher = pkgImport.Scope().Lookup(gomegaMatcherIdentifierName).Type()
 				}
 			}
 		}
